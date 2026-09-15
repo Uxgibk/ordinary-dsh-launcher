@@ -15,7 +15,7 @@ rem  下次运行会自动重建（只会丢掉历史日志和「运行中 GUI�
 rem
 rem  一定会出现的文件：
 rem    .gitignore                    自动生成，让整个目录不被 git 追踪
-rem    state.json                    当前 GUI 的 pid / 端口 / 访问地址（[9] 的数据来源）
+rem    state.json                    当前 GUI 的 pid / 端口 / 访问地址（[8] 的数据来源）
 rem    logs\web-[时间戳].out.log     每次启动 GUI 一份，dsh web 的 stdout
 rem    logs\web-[时间戳].err.log     与上面配对，dsh web 的 stderr（正常是 0 字节）
 rem
@@ -25,10 +25,10 @@ rem    logs\gui-restart-[时间戳].launcher-[序号].out.log / .err.log
 rem    logs\gui-restart-[时间戳].preflight.txt
 rem    restart-gui.ps1、restart-stdin.txt、*.bak
 rem
-rem  为什么会越攒越多：每点一次 [1] / [2] / [3] 启动 GUI，就会新开一对带时间戳的
+rem  为什么会越攒越多：每点一次 [1] / [2] 启动 GUI，就会新开一对带时间戳的
 rem  日志；旧的一律保留，不覆盖、不轮转、也不自动清理。
 rem
-rem  菜单 [6] 子菜单里和文件有关的两项：
+rem  菜单 [5] 子菜单里和文件有关的两项：
 rem    [5] 查看 GUI 日志   只读，不改任何文件。先报文件大小 / 行数 / 时间，并统计
 rem                        「值得看的行」与第三方噪声各占多少，再单独列出值得看的
 rem                        行（带行号），最后显示折叠掉连续重复的尾部；还有

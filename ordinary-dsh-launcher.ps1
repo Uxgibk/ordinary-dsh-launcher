@@ -16,11 +16,11 @@
    - .dsh-launcher\ 是运行时自动生成的数据目录，不是必需文件，可随时删除；
      它会跟着启动器文件夹一起搬迁。首次运行由 Initialize-DataDir 建出
      .dsh-launcher\ + logs\ + .gitignore，此后每启动一次 GUI 就新增一对带
-     时间戳的日志（只增不减，除非用 [6][6] 清理）。
+     时间戳的日志（只增不减，除非用 [5][6] 清理）。
      一定会出现：
        .gitignore                        内容 * 与 !.gitignore，防凭据被误提交
-       state.json                        启动成功后写；[6][3]/[4] 与 [9] 的数据来源
-       logs\web-<stamp>.out.log          dsh web 的 stdout（[6][5] 读的就是它）
+       state.json                        启动成功后写；[5][3]/[4] 与 [8] 的数据来源
+       logs\web-<stamp>.out.log          dsh web 的 stdout（[5][5] 读的就是它）
        logs\web-<stamp>.err.log          dsh web 的 stderr（正常 0 字节）
      可能出现（不是本脚本生成的，脚本内无任何引用，删掉无影响）：
        logs\gui-restart-*.log            外部 GUI 重启助手的日志
@@ -28,18 +28,18 @@
        logs\gui-restart-*.preflight.txt  同上，重启前的环境快照
        restart-gui.ps1 / restart-stdin.txt / *.bak  该助手脚本与手工留档
 
-  菜单项与文件的对应（[6] 子菜单，详见 Show-GuiLog / Clear-Logs 的注释）
-   - [5] 查看 GUI 日志：只读，不改动任何文件。读 state.json 的 outLog；没有存活实例
+  菜单项与文件的对应（[5] 子菜单，详见 Show-GuiLog / Clear-Logs 的注释）
+   - [5] → [5] 查看 GUI 日志：只读，不改动任何文件。读 state.json 的 outLog；没有存活实例
      或该文件已被删，则退回 logs\ 下最后写入的 *.out.log。显示顺序是：文件大小/行数/
      时间 + 内容构成统计 → 「值得看的行」（带行号）→ 折叠掉连续重复的尾部，
      另给 [1] 原始尾部 / [2] 文件开头 / [3] 搜索关键词 三个入口。全程打码 token。
-   - [6] 清理日志文件：删 logs\ 下所有 *.log（web-*、gui-restart-*、
+   - [5] → [6] 清理日志文件：删 logs\ 下所有 *.log（web-*、gui-restart-*、
      gui-restart-*.launcher-*）；不删 state.json、.gitignore、logs\*.preflight.txt，
      以及 logs\ 之外的任何文件。
 
  安全约定（重要）
-   - token 等同于登录凭据：默认界面一律掩码显示，只在 [9] 里按需展示。
-   - 不自动写剪贴板；复制动作必须由用户在 [9] 里显式选择。
+   - token 等同于登录凭据：默认界面一律掩码显示，只在 [8] 里按需展示。
+   - 不自动写剪贴板；复制动作必须由用户在 [8] 里显式选择。
    - 启动成功后清洗日志里的 token；展示日志时再打码一次。
    - .dsh-launcher\ 自动写入 .gitignore，避免状态/日志被误提交。
 
@@ -72,7 +72,7 @@ param(
 # 下面三行是启动器的唯一身份来源：横幅、窗口标题都用它们。
 # 改名字 / 升版本 / 换副标题，只改这三行，其他文件无需改动。
 $Script:LauncherName    = 'ordinary dsh launcher'
-$Script:LauncherVersion = '0.2.0914'
+$Script:LauncherVersion = '0.3.2'
 $Script:LauncherTagline = 'DeepSeek Harness 快速启动器'
 
 $ErrorActionPreference = 'Stop'
@@ -100,7 +100,7 @@ $Script:DefaultWorkspace = $Script:LauncherDir
 
 $Script:DefaultPort      = 3080          # dsh web-app 的内置默认端口
 $Script:NpmPackage       = '@deepseek-ai/dsh'
-# 官方入口集合：菜单 [8] 直接遍历这个数组渲染，增删链接只改这里。
+# 官方入口集合：菜单 [7] 直接遍历这个数组渲染，增删链接只改这里。
 # 顺序即显示顺序，索引从 1 开始（0 保留给「返回」）。
 $Script:OfficialLinks    = @(
     [pscustomobject]@{ Title = '官方产品页';          Url = 'https://www.deepseek.com/harness' }
@@ -794,7 +794,7 @@ function Show-LaunchError {
         Write-Host ''
         Write-Hint "诊断：dsh 无法写入 $($Script:DshHome)\profiles —— 权限被拒绝。"
         Write-Hint 'dsh 启动时要重写 profile 配置，该目录必须可写。'
-        Write-Hint '可运行 [6] → [1] 环境自检确认；若在沙箱 / 受限账户下运行，请放宽该目录权限。'
+        Write-Hint '可运行 [5] → [1] 环境自检确认；若在沙箱 / 受限账户下运行，请放宽该目录权限。'
     } elseif ($allText -match 'EADDRINUSE') {
         Write-Host ''
         Write-Hint '诊断：端口已被占用（EADDRINUSE）—— 换一个端口再试。'
@@ -957,7 +957,7 @@ function Invoke-LaunchWeb {
         Write-Host ''
         Write-Warn2 "进程已启动（PID $($res.Pid)），但暂未捕获到 dsh web: URL。"
         Write-Hint '它可能仍在启动中（首次启动会初始化 profile，较慢）。'
-        Write-Hint '稍后可用 [6] → [3] 查看状态、[6] → [5] 查看日志。'
+        Write-Hint '稍后可用 [5] → [3] 查看状态、[5] → [5] 查看日志。'
         Write-Hint "日志：$($res.Log)"
         Write-Elapsed -Seconds $res.Elapsed -Label '已等待耗时'
         Pause-Any
@@ -971,7 +971,7 @@ function Invoke-LaunchWeb {
     Write-Host "  地址：$(Get-OriginUrl -Url $res.Url)" -ForegroundColor Green
     Write-Host '        ?token=••••••••   （已隐藏）' -ForegroundColor DarkGray
     Write-Host ''
-    Write-Hint '完整访问地址（含 token）请用菜单 [9] 查看 / 复制。'
+    Write-Hint '完整访问地址（含 token）请用菜单 [8] 查看 / 复制。'
     Write-Hint 'token 等同于登录凭据：不要截图或分享。'
 
     if ($NoOpen) {
@@ -987,7 +987,7 @@ function Invoke-LaunchWeb {
 }
 
 function Show-AccessInfo {
-    <# [9] 访问地址与 Token —— 唯一显示完整凭据的地方，需要用户主动进入 #>
+    <# [8] 访问地址与 Token —— 唯一显示完整凭据的地方，需要用户主动进入 #>
     Write-Section '访问地址与 Token'
 
     $live = Get-LiveGuiState
@@ -1178,60 +1178,6 @@ function Show-LatestVersion {
     Pause-Any
 }
 
-function Show-CustomLaunch {
-    Write-Section '自定义参数启动'
-    Write-Hint '参数会原样追加到 dsh web 之后。'
-    Write-Hint '常用：--port 8080  --no-open  --trusted-host myhost:3080  --host 127.0.0.1'
-    Write-Host ''
-    Write-Host '  ⚠ 安全提醒：' -ForegroundColor DarkYellow
-    Write-Hint '· --host 0.0.0.0 会被 dsh 拒绝（它等于把远程代码执行暴露到网络）'
-    Write-Hint '· --host 改成非 127.0.0.1 会把 GUI 暴露给局域网，请确认确实需要'
-    Write-Hint '· --trusted-host 每多一个主机名就多一个可访问入口'
-    Write-Host ''
-
-    $ws = Read-Host "  工作目录 [回车 = $($Script:DefaultWorkspace)]"
-    if (-not $ws) { $ws = $Script:DefaultWorkspace }
-    if (-not (Test-Path $ws)) { Write-Bad "目录不存在：$ws"; Pause-Any; return }
-
-    $line = Read-Host '  参数（回车 = 与 [1] 相同）'
-    $extra = @()
-    if ($line -and $line.Trim()) {
-        # 简易分词，支持引号包裹
-        $extra = [regex]::Matches($line, '"[^"]*"|\S+') | ForEach-Object { $_.Value.Trim('"') }
-    }
-
-    # 危险参数二次确认
-    if ($extra -contains '0.0.0.0') {
-        Write-Bad '--host 0.0.0.0 等于把远程代码执行暴露到整个网络，dsh 本身也会拒绝它。已取消。'
-        Pause-Any
-        return
-    }
-    $hostIdx = [array]::IndexOf($extra, '--host')
-    if ($hostIdx -ge 0 -and ($hostIdx + 1) -lt $extra.Count) {
-        $hv = $extra[$hostIdx + 1]
-        if ($hv -ne '127.0.0.1' -and $hv -ne 'localhost') {
-            Write-Warn2 "你指定了 --host $hv —— 这会把 GUI 暴露到本机之外。"
-            $ok = Read-Host '  确认继续？[y/N]'
-            if ($ok -notmatch '^[Yy]') { Write-Info '已取消。'; Pause-Any; return }
-        }
-    }
-
-    $portOverride = 0
-    for ($i = 0; $i -lt $extra.Count; $i++) {
-        if ($extra[$i] -eq '--port' -and ($i + 1) -lt $extra.Count) {
-            $parsed = 0
-            if ([int]::TryParse($extra[$i + 1], [ref]$parsed)) { $portOverride = $parsed }
-        }
-        if ($extra[$i] -like '--port=*') {
-            $parsed = 0
-            if ([int]::TryParse($extra[$i].Substring(7), [ref]$parsed)) { $portOverride = $parsed }
-        }
-    }
-
-    $noOpen = $extra -contains '--no-open'
-    Invoke-LaunchWeb -NoOpen:$noOpen -ExtraArgs $extra -PortOverride $portOverride -WorkDir $ws
-}
-
 function Invoke-SelfCheck {
     param([switch]$Quiet)
 
@@ -1371,14 +1317,14 @@ function Invoke-SelfCheck {
     if ($leakyLogs.Count -gt 0) {
         Write-Warn2 "$($leakyLogs.Count) 个日志文件含明文 token。"
         Write-Hint '这些多半来自旧版本（当时还没有日志清洗）。'
-        Write-Hint '可用 [6] → [6] 清理日志。'
+        Write-Hint '可用 [5] → [6] 清理日志。'
         $issues.Add('日志含 token')
     } else {
         Write-Ok '日志中未发现明文 token。'
     }
-    # state.json 保存访问地址是 [9] 的功能前提，不算缺陷，只作说明
+    # state.json 保存访问地址是 [8] 的功能前提，不算缺陷，只作说明
     if (Test-Path $Script:StateFile) {
-        Write-Info 'state.json 保存访问地址（[9] 的数据来源），已由 .gitignore 保护。'
+        Write-Info 'state.json 保存访问地址（[8] 的数据来源），已由 .gitignore 保护。'
     }
 
     Write-Host ''
@@ -1528,7 +1474,7 @@ function Show-RunningGui {
         Write-Ok "本启动器启动的 Web UI：PID $($st.pid) $uptime"
         Write-Hint "端口：$($st.port)"
         Write-Hint "工作目录：$($st.workspace)"
-        if ($st.url) { Write-Hint "地址：$(Get-MaskedUrl -Url $st.url)（完整地址见 [9]）" }
+        if ($st.url) { Write-Hint "地址：$(Get-MaskedUrl -Url $st.url)（完整地址见 [8]）" }
         Write-Hint "日志：$($st.outLog)"
         Write-Hint "入口：$($st.entry)"
         $mem = [Math]::Round($live.Process.WorkingSet64 / 1MB, 1)
@@ -1545,7 +1491,7 @@ function Show-RunningGui {
         if ($owner) {
             Write-Warn2 "被占用：$($owner.Name) PID $($owner.ProcessId)"
             if ($owner.Path) { Write-Hint $owner.Path }
-            if (-not $live) { Write-Hint '这可能是手动启动的 dsh，本启动器无法用 [4] 停止它。' }
+            if (-not $live) { Write-Hint '这可能是手动启动的 dsh，本启动器无法用 [5] → [4] 停止它。' }
         } else {
             Write-Warn2 '被占用（无法确定占用进程）。'
         }
@@ -1611,14 +1557,14 @@ function Stop-GuiInteractive {
 
 function Get-LogNoisePatterns {
     <#
-      已知的「第三方噪声行」正则表。[6] → [5] 用它把 GUI 日志拆成
+      已知的「第三方噪声行」正则表。[5] → [5] 用它把 GUI 日志拆成
       「值得看的行」与「噪声」两部分。
 
       为什么需要它：web-*.out.log 只是 dsh web 的 stdout 重定向文件，任何拿到
       这个句柄的子进程写什么都会落进来。实测某个实例的 285 行里有 283 行是
       移动云盘 mCloud 的 Shell 扩展（mcloud_shell_ext_x64.dll）刷的
       SharedMemory read faild —— 只看尾部 40 行会 100% 落在噪声里，等于没看。
-      加新条目时请同时在 docs/faq.md 的《[6] → [5] 里出现看不懂的重复行》里记一笔。
+      加新条目时请同时在 docs/faq.md 的《[5] → [5] 里出现看不懂的重复行》里记一笔。
     #>
     return @(
         '^\s*SharedMemory read faild\s*$'
@@ -1659,7 +1605,7 @@ function Show-LogLines {
 
 function Show-GuiLog {
     <#
-      [6] → [5] 查看 GUI 日志 —— 纯只读：不创建、不删除、不改写任何文件。
+      [5] → [5] 查看 GUI 日志 —— 纯只读：不创建、不删除、不改写任何文件。
 
       读的是哪一个文件（按优先级）：
         1. state.json 的 outLog 字段，即当前运行中实例的
@@ -1695,7 +1641,7 @@ function Show-GuiLog {
     }
     if (-not $log -or -not (Test-Path $log)) {
         Write-Info '还没有日志文件（尚未启动过 GUI）。'
-        Write-Hint '先用 [1] / [2] / [3] 启动一次 GUI，这里就有东西看了。'
+        Write-Hint '先用 [1] / [2] 启动一次 GUI，这里就有东西看了。'
         return (Pause-Any)
     }
 
@@ -1712,7 +1658,7 @@ function Show-GuiLog {
     # 第三方噪声可以无限刷，查看日志时别被超大文件拖死
     if ($item.Length -gt 32MB) {
         Write-Warn2 ("文件已达 {0} MB，太大，只显示开头与结尾各 40 行。" -f [Math]::Round($item.Length / 1MB, 1))
-        Write-Hint '建议用 [6] → [6] 清理日志，或停掉 GUI 后重开。'
+        Write-Hint '建议用 [5] → [6] 清理日志，或停掉 GUI 后重开。'
         Write-Host ''
         Show-LogLines -Lines @(Get-Content $log -Encoding UTF8 -TotalCount 40 -ErrorAction SilentlyContinue) -FirstNumber 1
         Write-Host ''
@@ -1819,7 +1765,7 @@ function Show-GuiLog {
 
 function Clear-Logs {
     <#
-      [6] → [6] 清理日志文件 —— 本菜单里唯一会删东西的项（另一个是 [4] 停进程）。
+      [5] → [6] 清理日志文件 —— 本菜单里唯一会删东西的项（另一个是 [4] 停进程）。
 
       删除范围 = .dsh-launcher\logs\ 下【所有扩展名为 .log 的文件】。界面上会先按
       命名分类统计，再列出实际文件名给用户核对，然后才问 y/N。四类文件：
@@ -1926,7 +1872,7 @@ function Clear-Logs {
         if ($failed.Count -gt 0) {
             Write-Warn2 "$($failed.Count) 个文件删不掉（正被运行中的进程占用）："
             foreach ($n in $failed) { Write-Hint $n }
-            Write-Hint '停掉 GUI（[6] → [4]）之后再清理一次即可。'
+            Write-Hint '停掉 GUI（[5] → [4]）之后再清理一次即可。'
         }
     } else {
         Write-Info '已取消。'
@@ -1984,8 +1930,8 @@ function Show-MainMenu {
     if ($live) {
         Write-Host ''
         Write-Host "  ● Web UI 运行中 · PID $($live.State.pid) · 端口 $($live.State.port)" -ForegroundColor Green
-        # token 一律掩码：完整地址只在 [9] 里按需显示
-        Write-Host "    http://127.0.0.1:$($live.State.port)/?token=••••••••   （完整地址见 [9]）" -ForegroundColor DarkGray
+        # token 一律掩码：完整地址只在 [8] 里按需显示
+        Write-Host "    http://127.0.0.1:$($live.State.port)/?token=••••••••   （完整地址见 [8]）" -ForegroundColor DarkGray
     } else {
         Write-Host ''
         Write-Host '  ○ 当前没有运行中的 Web UI' -ForegroundColor DarkGray
@@ -1994,13 +1940,12 @@ function Show-MainMenu {
     Write-Host ''
     Write-Host '    [1] 启动 Web UI（默认，自动打开浏览器）' -ForegroundColor White
     Write-Host '    [2] 启动 Web UI（不自动打开浏览器）' -ForegroundColor White
-    Write-Host '    [3] 自定义参数启动' -ForegroundColor White
-    Write-Host '    [4] 查看当前安装版本' -ForegroundColor White
-    Write-Host '    [5] 查看最新可用版本' -ForegroundColor White
-    Write-Host '    [6] 环境自检与进程管理' -ForegroundColor White
-    Write-Host '    [7] 打开工作目录' -ForegroundColor White
-    Write-Host '    [8] 打开官方网址' -ForegroundColor White
-    Write-Host '    [9] 查看访问地址与 Token' -ForegroundColor White
+    Write-Host '    [3] 查看当前安装版本' -ForegroundColor White
+    Write-Host '    [4] 查看最新可用版本' -ForegroundColor White
+    Write-Host '    [5] 环境自检与进程管理' -ForegroundColor White
+    Write-Host '    [6] 打开工作目录' -ForegroundColor White
+    Write-Host '    [7] 打开官方网址' -ForegroundColor White
+    Write-Host '    [8] 查看访问地址与 Token' -ForegroundColor White
     Write-Host '    [0] 退出启动器' -ForegroundColor DarkGray
     Write-Host ''
     Write-Host "  工作目录：$($Script:DefaultWorkspace)" -ForegroundColor DarkGray
@@ -2064,13 +2009,12 @@ function Invoke-Action {
     switch ($Key) {
         '1' { [void](Invoke-LaunchWeb -NoOpen:$false) }
         '2' { [void](Invoke-LaunchWeb -NoOpen:$true) }
-        '3' { [void](Show-CustomLaunch) }
-        '4' { [void](Show-CurrentVersion) }
-        '5' { [void](Show-LatestVersion) }
-        '6' { [void](Show-ManageMenu) }
-        '7' { [void](Open-WorkspaceFolder) }
-        '8' { [void](Open-Docs) }
-        '9' { [void](Show-AccessInfo) }
+        '3' { [void](Show-CurrentVersion) }
+        '4' { [void](Show-LatestVersion) }
+        '5' { [void](Show-ManageMenu) }
+        '6' { [void](Open-WorkspaceFolder) }
+        '7' { [void](Open-Docs) }
+        '8' { [void](Show-AccessInfo) }
         default { return $false }
     }
     return $true
@@ -2112,7 +2056,7 @@ while ($true) {
         $live = Get-LiveGuiState
         if ($live) {
             Write-Host "  Web UI 仍在后台运行（PID $($live.State.pid)）。" -ForegroundColor DarkGray
-            Write-Host '  访问地址请重开启动器后用 [9] 查看，避免凭据留在屏幕上。' -ForegroundColor DarkGray
+            Write-Host '  访问地址请重开启动器后用 [8] 查看，避免凭据留在屏幕上。' -ForegroundColor DarkGray
         }
         Write-Host '  再见。' -ForegroundColor Cyan
         Write-Host ''

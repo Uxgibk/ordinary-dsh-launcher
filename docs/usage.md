@@ -1,10 +1,10 @@
 # 使用详解
 
-本页收录 `[6]` 子菜单的逐项说明、环境自检项目与可配置项。
+本页收录 `[5]` 子菜单的逐项说明、环境自检项目与可配置项。
 
 ---
 
-## `[6]` 子菜单
+## `[5]` 子菜单
 
 | 选项 | 作用 |
 |---|---|
@@ -46,7 +46,7 @@
 
 ```powershell
 $Script:LauncherName    = 'ordinary dsh launcher'        # 横幅第一行的名字
-$Script:LauncherVersion = '0.2.0914'                     # 横幅第一行的版本号
+$Script:LauncherVersion = '0.0.0'                     # 横幅第一行的版本号
 $Script:LauncherTagline = 'DeepSeek Harness 快速启动器'   # 横幅第二行的副标题
 ```
 
@@ -63,4 +63,4 @@ $Script:ProgressFullSecs = 20                    # 进度条填满所需秒数
 
 > **工作目录很重要**：dsh 把「运行命令时所在的目录」当作 workspace 根目录，也就是 agent 默认操作的项目目录。
 > 默认就是启动器自己所在的文件夹（自包含、拷走即用）；想固定指向别的项目，改上面 `DefaultWorkspace` 一行，
-> 或者用 `[3]` 自定义参数启动临时指定。`-Workspace` 开关可以覆盖本次运行。
+> 或用 `-Workspace` 开关覆盖本次运行。

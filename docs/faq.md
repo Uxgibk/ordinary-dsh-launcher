@@ -22,7 +22,7 @@
 说明 `.ps1` 不在 `.cmd` 旁边（或被移到了子目录）。把两个必需文件放回同一个文件夹即可。
 
 ## 退出启动器后想关掉 GUI？
-重新打开启动器 → `[6]` → `[4]`。菜单顶部会显示当前 GUI 的 PID 和端口（token 已脱敏）。
+重新打开启动器 → `[5]` → `[4]`。菜单顶部会显示当前 GUI 的 PID 和端口（token 已脱敏）。
 停止后该次日志里的 token 会被自动清洗。
 注意要用**当初启动它的那个启动器**（见[一份启动器 = 一份数据目录](data-and-files.md#一份启动器--一份数据目录)）。
 
@@ -31,13 +31,13 @@
 
 ## 把启动器复制给别人后，他那里提示端口被占用 / 打不开？
 每个 dsh 实例的 token 与状态都在各自的 `.dsh-launcher\` 里，互不影响；
-端口被占用时用 `[6]` → `[4]` 停掉旧实例，或让启动器自动换一个空闲端口。
+端口被占用时用 `[5]` → `[4]` 停掉旧实例，或让启动器自动换一个空闲端口。
 
 ## 启动失败提示 `EPERM ... profiles`？
-`DSH_HOME\profiles` 不可写。用 `[6]` → `[1]` 自检确认，然后放宽该目录权限
+`DSH_HOME\profiles` 不可写。用 `[5]` → `[1]` 自检确认，然后放宽该目录权限
 （受限账户、沙箱环境、杀软拦截都可能造成）。
 
-## `[6]` → `[2]` 报 `The variable '$Script:NpmPackage' cannot be retrieved ...`？
+## `[5]` → `[2]` 报 `The variable '$Script:NpmPackage' cannot be retrieved ...`？
 这不是网络问题，是 npm 的 PowerShell 垫片在搞鬼。PowerShell 5.1 会把裸 `npx` 解析成
 `npx.ps1`（而不是同目录的 `npx.cmd`），而该垫片内部是 `Set-StrictMode -Version Latest`
 加上「把调用行的源码原文 `Invoke-Expression` 重放到自己的作用域」——启动器写在参数里的
@@ -47,7 +47,7 @@
 `$ErrorActionPreference = 'Stop'` 撞上 `2>&1`——npm 的进度与警告都走 stderr，
 在 5.1 下会被升级成 terminating error，让成功的命令被误判成失败。
 
-## `[5]` 查询最新版本失败？
+## `[4]` 查询最新版本失败？
 网络不可达或代理拦截会走失败分支并提示手动命令。这不影响启动，已安装版本照常可用。
 
 ## 为什么错误信息里没有退出码？
@@ -55,7 +55,7 @@ PowerShell 5.1 的 `Start-Process -PassThru` 返回对象未关联进程句柄�
 实测 `ExitCode` / `Refresh()` / `WaitForExit()` 三种方式都读不到。
 启动器改为从 stderr 内容推断失败原因，比退出码更具体。
 
-## `[6]` → `[5]` 里出现看不懂的重复行（例如 `SharedMemory read faild`）？
+## `[5]` → `[5]` 里出现看不懂的重复行（例如 `SharedMemory read faild`）？
 **不是启动器打印的，也不是 dsh 打印的**，是第三方程序借道落进来的噪声。以实测的一例说明：
 `SharedMemory read faild`（注意它把 failed 拼错了）是**移动云盘 mCloud 的 Shell 扩展**
 `mcloud_shell_ext_x64.dll` 里**硬编码的字符串** —— 同一段里紧挨着 `cornerMarkLog`、
@@ -73,7 +73,7 @@ mCloud 自己的 `log\cornerMark\*.log` 也在同一秒记录了大量同样的�
 
 - 只出现在 `web-*.out.log`（stdout），而 `web-*.err.log` 仍然是 **0 字节**；
 - 这句话在 dsh 安装目录、`.dsh` profile、已装插件里**搜不到**，但在某个**第三方软件目录**里能搜到；
-- GUI 本身一切正常（`[6]` → `[3]` 进程活着、地址可用）。
+- GUI 本身一切正常（`[5]` → `[3]` 进程活着、地址可用）。
 
-处理办法：当噪声忽略，或 `[6]` → `[6]` 清掉。想从源头减少，就在那个第三方客户端里
+处理办法：当噪声忽略，或 `[5]` → `[6]` 清掉。想从源头减少，就在那个第三方客户端里
 关掉它的「资源管理器扩展 / 同步角标」之类的开关。
