@@ -1,0 +1,13 @@
+# 行尾一律以本文件为准，不受各人 core.autocrlf 影响。
+* text=auto
+
+# .cmd 必须保持 CRLF：改成 LF 会让 cmd.exe 解析中文注释时失步，
+# 实测每次运行会冒出 8~18 行 "'xxx' is not recognized"。
+*.cmd text eol=crlf
+
+# .ps1 与文档保持 LF。
+# 注意：.ps1 另需 UTF-8 with BOM，git 不会改动 BOM，靠编辑器保证。
+*.ps1 text eol=lf
+*.md  text eol=lf
+.gitignore     text eol=lf
+.gitattributes text eol=lf
